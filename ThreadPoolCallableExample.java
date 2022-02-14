@@ -21,7 +21,6 @@ public class ThreadPoolCallableExample {
 			allFutureList.add(future);
 		}
 		
-		
 		System.out.println("Performing some task...........");
 		
 		for(int i=0;i<100;i++) {

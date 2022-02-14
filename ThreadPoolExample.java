@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *  							   No new task are accepted	
  *  							   Previously submitted tasks waiting in queue are returned
  *  							   Task being run by thread(s) are attempted to stop (No Guarantee)
+ *  
  *  executorService.isShutdown();  Will Return true since shut down has begin
  *  executorService.isTerminated(); Will Return true if all tasks are completed included queued ones
  *  executorService.awaitTermination(1, TimeUnit.SECONDS); Blocks until all tasks are completed or if timeout occurs

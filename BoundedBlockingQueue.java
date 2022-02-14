@@ -16,18 +16,18 @@ public class BoundedBlockingQueue<E> {
 
 	public synchronized void put(E element) throws InterruptedException {
 		while(this.q.size() == this.capacity) {
-			wait();
+			this.wait();
 		}
 		this.q.addFirst(element);
-		notifyAll();
+		this.notifyAll();
 	}
 
 	public synchronized E take() throws InterruptedException {
 		while(this.q.isEmpty()) {
-			wait();
+			this.wait();
 		}
 		E e = this.q.removeLast();
-		notifyAll();
+		this.notifyAll();
 		return e;
 	}
 

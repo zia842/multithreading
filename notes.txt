@@ -1,0 +1,88 @@
+1. What is an ideal thread pool size ?
+Depends on Task type -> CPU Intensive, IO Bound
+
+CPU Bound Task - With same number of cores increasing thread count doesn't speed up task completion.
+Ideal Thread Pool Size = Number of CPU Cores (You can check number of cpu cores by calling 
+Runtime.getRuntime().availableProcessors()
+
+
+
+IO Bound Task - Even with same number of cores, increasing thread count can speed up completion.
+Number of threads that can be added for each CPU core, depends on how much time it takes for 
+tasks IO operation to complete.
+
+Ideal Thread Count = Number of Cores * (1 + Wait Time / CPU Time)
+
+Other Factors
+- Are there any other applications running on same CPU
+- Are there other executor services or threads running in same JVM application
+- Threads are heavy weight (1-2MB). Cannot create thousands of them. Even if a task IO Operation allows
+space for thousand threads.
+- Too many threads will also have added complexity time-taken for thread switching
+- Too many threads also affect data locality (i.e. L1/L2 etc need to be flushed during thread switch)
+
+
+Volatile vs Atomic Operations
+Use volatile when there are visibility problem (e.g there are 2 threads running one thread is modifying boolean flag 
+& other thread based on boolean flag condition is processing value modified by thread one is not visible to thread two
+it requires flush to shared memory and refresh of values from shared memory to thread cache)
+
+Atomic - Use when you want to perform operations as single unit of work (e.g Increasing / Decreasing Counters AtomicIntegers,
+AtomicLong)
+
+AtomicReference - Caches (Building new cache in background and replacing atomically) used by internal classes. Non-Blocking algorithms
+
+ThreadLocal - Per Thread instances for memory efficiency and thread-safety.
+(e.g usage request comes to server it fetches user profile and there are separate back-end which requires user data instead of 
+having thread safe / synchronized map each thread have its user profile
+
+- Per Thread context (thread-safety + Performance)
+Spring uses lot of context holders - LocaleContextHolder, TransactionContextHolder, RequestContextHolder, SecurityContextHolder,
+DateTimeContextHolder
+
+- Thread Confinement
+- Per Thread object for perf
+- Per Thread context
+
+Usage Tips
+- clean up once out of scope
+- use local variables
+- delegate to frameworks
+
+Locks vs Synchronized
+Lock framework works like synchronized blocks except 
+locks can be more sophisticated than Java’s synchronized blocks. Locks allow more flexible structuring of synchronized code.
+scope can expand to multiple methods + you can acquire multiple locks and you can have conditions 
+
+Reentrant Lock u can call it multiple times on same object 
+e.g private static accessResource(){
+lock.lock();
+if(someCondition){
+	//Recursion call
+	accessResource
+}
+lock.unlock ; //Always surround with finally 
+
+Lock Fairness
+new RentrantLock(true) //Lock is fair longest waiting thread will acquire lock first
+
+Unfair Locks
+new RentrantLock(false) //Barge in possible starvation
+
+lock.tryLock();
+lock.tryLock(timeout:1, TimeUnit.Seconds);
+
+Reentrant Lock vs Reentrant Read Write Lock
+Reentrant Lock only one thread at a time
+ReentrantReadWrite Lock one writer at a time + multiple readers at a time. Only Read or write at a a time 
+ReentrantReadWrite lock = new ReentrantReadWrite();
+ReentrantReadWrite.ReadLock readLock = lock.readLock();
+ReentrantReadWrite.WriteLock writeLock = lock.writeLock();
+
+Semaphore - Resources which are in limited quantity and want to restrict it 
+Acquire Permits 
+release()
+
+
+
+
