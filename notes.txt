@@ -83,6 +83,52 @@ Semaphore - Resources which are in limited quantity and want to restrict it
 Acquire Permits 
 release()
 
+jvisualvm, jstack we can download thread dump process id
+where it can show deadlock in the stack trace
+   
+To prevent deadlocks use timeouts in tryLock
+Be cautious about ordering
+Global ordering of locks can be tricky
+Deadlock occurs when a thread is waiting for a lock held by other thread and vice versa
+Difficult to detect due to multiple lock types and thread sources
+Detect at runtime using thread dumps
+Consistent ordering of lock acquistion helps avoid deadlock
+Using timeouts for deadlocks can also help 
 
+Data Race (Rare occurrences due to Java language runtime guarnetees)
+Multiple threads access shared variable at the same time without synchronization
+At least one thread is writing 
+No Synchronization
+
+No Problem for int it is atomic only 1 thread at a time is allowed to write hence no corruption
+Long/Double no gurantee because they have 2 separate 32 bits main memory -> One thread can be writing 
+to one of the 32 bit and other could be reading making it to corrupt these are not atomic
+
+
+
+Race Condition
+Multiple threads access shared variable value of variable depends on execution order of threads.
+
+When output of computation depends on relatively ordering of threads/instructions this is called Race Condition
+Atomically locking operations should always be done by using/acquiring locks
+
+Map<String, String> loanedBooks = new ConcurrentHashMap<String, String>(); Same issue even if thread safe
+
+//Thread 1
+if(loanedBooks.containsKey("book1")){
+	loanedBooks.put("books1","user3");
+}
+
+//Thread 2
+if(loanedBooks.containsKey("book1")){
+	loanedBooks.put("books1","user7");
+}
+
+Instead use locks or compound operations exposed via methods
+loanedBooks.putIfAbsent("books1", "user3");
+loanedBooks.putIfAbsent("books1", "user7");
+
+AtomicInteger count = new AtomicInteger(0);
+count.incrementAndGet(); //Read + Update + Write  = Atomic
 
 
